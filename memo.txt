@@ -1,0 +1,15 @@
+#   Column                Non-Null Count   Dtype  
+---  ------                --------------   -----  
+ 0   id                    593994 non-null  int64  
+ 1   annual_income         593994 non-null  float64
+ 2   debt_to_income_ratio  593994 non-null  float64
+ 3   credit_score          593994 non-null  int64
+ 4   loan_amount           593994 non-null  float64
+ 5   interest_rate         593994 non-null  float64
+ 6   gender                593994 non-null  object
+ 7   marital_status        593994 non-null  object
+ 8   education_level       593994 non-null  object
+ 9   employment_status     593994 non-null  object
+ 10  loan_purpose          593994 non-null  object
+ 11  grade_subgrade        593994 non-null  object
+ 12  loan_paid_back        593994 non-null  float64
