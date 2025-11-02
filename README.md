@@ -1,4 +1,4 @@
-# 🧮 Loan Repayment Prediction
+# 💸 Loan Repayment Prediction
 
 ## 📘 Project Overview
 
@@ -42,7 +42,7 @@ By combining **data-driven insights, model performance, and interpretability**, 
 
 1. **Data Preprocessing**
    - Handling missing values
-   - Encoding categorical features
+   - Encoding categorical features(One-Hot Encoding, Ordinal Encoding)
    - Feature scaling and normalization
    - Outlier detection (IsolationForest)
 
@@ -110,6 +110,7 @@ A bank analyst inputs the following borrower data into the Streamlit dashboard:
 | `interest_rate` | 7.8 |
 | `education_level` | Bachelor |
 | `employment_status` | Full-time |
+
 
 The trained model outputs:  
 👉 **Predicted probability of full repayment:** 

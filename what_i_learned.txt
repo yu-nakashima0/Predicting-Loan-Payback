@@ -1,0 +1,9 @@
+Categorical encoding:
+    Categorical variables can be:
+        Nominal: No natural order (e.g. color = red, blue, green)
+        Ordinal: Has an inherent order (e.g. size = small, medium, large)
+    Type of Data  ->  Best Encoding
+        Ordinal (has order)  ->  OrdinalEncoder
+        Nominal (no order, few categories)  ->  OneHotEncoder
+        Nominal (many categories)  ->  TargetEncoder, BinaryEncoder, or CountEncoder
+    
