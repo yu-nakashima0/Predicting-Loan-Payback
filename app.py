@@ -1,13 +1,16 @@
 import pandas as pd
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import MinMaxScaler
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+from sklearn.feature_selection import mutual_info_regression
+import plotly.express as px
+import streamlit as st
+import plotly.graph_objects as go
+from scipy import stats
+from sklearn.feature_selection import mutual_info_classif
 
-
-df = pd.read_csv('train.csv')
-print(df.head())
-print(df.describe())
-print(df.info())
-print(df.columns)
 
 
 """
@@ -92,8 +95,88 @@ def remove_outliers(df):
     return df
 
 
+"""
+make grouped feature list
+return: dictionary of feature groups
+"""
+def make_grouped_feature_list(df):
+    feature_groups = {
+        "Financial":["annual_income","debt_to_income_ratio","loan_amount","interest_rate"],
+        "Credit": ["credit_score","grade_subgrade"],
+        "Demographic": ["gender", "marital_status","education_level","employment_status"],
+        "Loan": ["loan_purpose"],
+        "Target":["loan_paid_back"]
+    }
 
-df = encode_categorical_variables(df)
-df = handle_missing_values(df)
-df = normalize_numerical_features(df)
-df = remove_outliers(df)
+    return feature_groups
+
+
+"""
+visualization each distribution
+"""
+def visualize_data_boxplot(df, feature_groups, unique_key):
+    st.title("Boxplots by feature group")
+    group = st.selectbox("select a group", feature_groups.keys(), key=unique_key)
+    cols = feature_groups[group]
+    st.subheader(f"Boxplots for groups: {group}")
+    for column in cols:
+        fig, ax = plt.subplots()
+        ax.boxplot(df[column].dropna())
+        ax.set_title(column)
+        st.pyplot(fig)
+
+
+"""
+visualization each number of counts
+"""
+def visualize_data_countplot(df, feature_groups, unique_key):
+    st.title("Countplots by feature group")
+    group = st.selectbox("select a group", feature_groups.keys(), key=unique_key)
+    cols = feature_groups[group]
+    st.subheader(f"Countplots for groups: {group}")
+    for column in cols:
+        fig, ax = plt.subplots()
+        sns.countplot(x=df[column], ax=ax)
+        ax.set_title(column)
+        st.pyplot(fig)
+
+
+"""
+visualization correlation heatmap, mutual information
+"""
+def visualize_more_info(df):
+    df.drop(columns = "id",inplace=True)
+    corr = df.corr()
+    fig, ax = plt.subplots(figsize=(12, 10))
+    sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm', ax=ax)
+    plt.title("Correlation Heatmap")
+    st.pyplot(fig)
+
+    X = df.drop(columns=["loan_paid_back"])
+    y = df["loan_paid_back"]
+    mi = mutual_info_classif(X,y, discrete_features='auto', random_state=42)
+    mi_scores = pd.Series(mi, index=X.columns).sort_values(ascending=False)
+    fig2, ax2 = plt.subplots(figsize=(10, 6))
+    sns.barplot(x=mi_scores.values, y=mi_scores.index, ax=ax2)
+    plt.title("Mutual Information Scores")
+    st.pyplot(fig2)
+
+
+
+
+df = pd.read_csv('train.csv')
+print(df.head())
+print(df.describe())
+print(df.info())
+print(df.columns)
+
+df_encoded = encode_categorical_variables(df)
+df_encoded = handle_missing_values(df_encoded)
+df_encoded = normalize_numerical_features(df_encoded)
+df_encoded = remove_outliers(df_encoded)
+
+feature_groups = make_grouped_feature_list(df)
+
+#visualize_data_boxplot(df, feature_groups, "before_encoding")
+#visualize_data_countplot(df, feature_groups, "before_encoding_countplot")
+visualize_more_info(df_encoded)

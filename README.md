@@ -35,7 +35,8 @@ By combining **data-driven insights, model performance, and interpretability**, 
 - **Rows:** ~593,994  
 - **Target variable:** `loan_paid_back` (float; 1 = fully repaid, 0 = default or partial)  
 - **Data Type:** Mixed numerical and categorical variables  
-
+- **Mutual Informatio:**
+![alt text](mutual_information.png)
 ---
 
 ## 🧩 Project Workflow
@@ -47,7 +48,7 @@ By combining **data-driven insights, model performance, and interpretability**, 
    - Outlier detection (IsolationForest)
 
 2. **Exploratory Data Analysis (EDA)**
-   - Visualizing distributions and correlations
+   - Visualizing distributions, correlations and mutual information
    - Understanding feature importance
    - Detecting skewness and transformations (Yeo-Johnson)
 
