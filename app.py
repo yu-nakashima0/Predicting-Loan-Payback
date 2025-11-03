@@ -17,6 +17,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.ensemble import RandomForestClassifier
+
 
 
 """
@@ -211,7 +213,8 @@ def k_fold_cross_validation(df, k):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
         y_train, y_test = y.iloc[train_index], y.iloc[test_index]
     
-        model = logistic_regression_model(X_train, y_train)
+        #model = logistic_regression_model(X_train, y_train)
+        model = random_forest_model(X_train, y_train)
         y_pred_proba = model.predict_proba(X_test)[:, 1]
         
         auc = roc_auc_score(y_test, y_pred_proba)
@@ -229,6 +232,15 @@ def logistic_regression_model(X_train, y_train):
     model.fit(X_train, y_train)
     return model
 
+
+"""
+random forest model
+return: model
+"""
+def random_forest_model(X_train, y_train):
+    model = RandomForestClassifier(n_estimators=20, random_state=42)
+    model.fit(X_train, y_train)
+    return model
 
 
 df = pd.read_csv('train.csv')
