@@ -1,3 +1,4 @@
+before encoding:
 #   Column                Non-Null Count   Dtype  
 ---  ------                --------------   -----  
  0   id                    593994 non-null  int64  
@@ -13,3 +14,37 @@
  10  loan_purpose          593994 non-null  object
  11  grade_subgrade        593994 non-null  object
  12  loan_paid_back        593994 non-null  float64
+
+
+after encoding:
+#   Column                           Non-Null Count   Dtype        
+---  ------                           --------------   -----        
+ 0   id                               593994 non-null  int64        
+ 1   annual_income                    593994 non-null  float64      
+ 2   debt_to_income_ratio             593994 non-null  float64      
+ 3   credit_score                     593994 non-null  int64        
+ 4   loan_amount                      593994 non-null  float64      
+ 5   interest_rate                    593994 non-null  float64      
+ 6   loan_paid_back                   593994 non-null  float64      
+ 7   gender_Female                    593994 non-null  int64        
+ 8   gender_Male                      593994 non-null  int64        
+ 9   gender_Other                     593994 non-null  int64        
+ 10  marital_status_Divorced          593994 non-null  int64        
+ 11  marital_status_Married           593994 non-null  int64        
+ 12  marital_status_Single            593994 non-null  int64        
+ 13  marital_status_Widowed           593994 non-null  int64        
+ 14  loan_purpose_Business            593994 non-null  int64        
+ 15  loan_purpose_Car                 593994 non-null  int64        
+ 16  loan_purpose_Debt consolidation  593994 non-null  int64        
+ 17  loan_purpose_Education           593994 non-null  int64        
+ 18  loan_purpose_Home                593994 non-null  int64        
+ 19  loan_purpose_Medical             593994 non-null  int64        
+ 20  loan_purpose_Other               593994 non-null  int64        
+ 21  loan_purpose_Vacation            593994 non-null  int64        
+ 22  employment_status_Employed       593994 non-null  int64        
+ 23  employment_status_Retired        593994 non-null  int64        
+ 24  employment_status_Self-employed  593994 non-null  int64        
+ 25  employment_status_Student        593994 non-null  int64        
+ 26  employment_status_Unemployed     593994 non-null  int64        
+ 27  education_level_encoded          593994 non-null  float64      
+ 28  grade_subgrade_encoded           593994 non-null  float64 

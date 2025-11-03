@@ -1,5 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import OrdinalEncoder
+from sklearn.preprocessing import MinMaxScaler
+
 
 df = pd.read_csv('train.csv')
 print(df.head())
@@ -45,6 +47,7 @@ def encode_categorical_variables(df):
             'F1', 'F2', 'F3', 'F4', 'F5'
     ]])
     df["grade_subgrade_encoded"] = encoder.fit_transform(df[["grade_subgrade"]])
+    df.drop(columns=["education_level", "grade_subgrade"], inplace=True)
     print(df.info())
     print(df.head())
     return df
@@ -62,8 +65,18 @@ def handle_missing_values(df):
     return df
 
 
+"""
+normalizing numerical features
+return: dataframe with normalized numerical features
+"""
+def normalize_numerical_features(df):
+    scaler = MinMaxScaler()
+    numerical_columns = df.select_dtypes(include=['int64', 'float64']).columns
+    df[numerical_columns] = scaler.fit_transform(df[numerical_columns])
+    return df
+
 
 df = encode_categorical_variables(df)
 df = handle_missing_values(df)
-
+df = normalize_numerical_features(df)
 

@@ -7,3 +7,4 @@ Categorical encoding:
         Nominal (no order, few categories)  ->  OneHotEncoder
         Nominal (many categories)  ->  TargetEncoder, BinaryEncoder, or CountEncoder
     
+Feature Scaling (Standardization)
