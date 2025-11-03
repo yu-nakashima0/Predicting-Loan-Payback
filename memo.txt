@@ -54,3 +54,10 @@ baseline:
         5-Fold Cross-Validation AUC: 0.9086 ± 0.0008
     RandomForestClassifier(n_estimators=20, random_state=42)
         5-Fold Cross-Validation AUC: 0.8940 ± 0.0012
+    XGBClassifier(
+        use_label_encoder=False,
+        eval_metric='auc',
+        random_state=42
+    )
+        5-Fold Cross-Validation AUC: 0.9194 ± 0.0008
+    

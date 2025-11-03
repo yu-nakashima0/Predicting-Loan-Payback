@@ -18,7 +18,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.ensemble import RandomForestClassifier
-
+import xgboost as xgb
 
 
 """
@@ -214,7 +214,8 @@ def k_fold_cross_validation(df, k):
         y_train, y_test = y.iloc[train_index], y.iloc[test_index]
     
         #model = logistic_regression_model(X_train, y_train)
-        model = random_forest_model(X_train, y_train)
+        #model = random_forest_model(X_train, y_train)
+        model = xgboost_model(X_train, y_train)
         y_pred_proba = model.predict_proba(X_test)[:, 1]
         
         auc = roc_auc_score(y_test, y_pred_proba)
@@ -228,7 +229,9 @@ logistic regression model
 return: model
 """
 def logistic_regression_model(X_train, y_train):
-    model = LogisticRegression(max_iter=20)
+    model = LogisticRegression(
+        max_iter=20
+    )
     model.fit(X_train, y_train)
     return model
 
@@ -238,7 +241,24 @@ random forest model
 return: model
 """
 def random_forest_model(X_train, y_train):
-    model = RandomForestClassifier(n_estimators=20, random_state=42)
+    model = RandomForestClassifier(
+        n_estimators=20, 
+        random_state=42
+    )
+    model.fit(X_train, y_train)
+    return model
+
+
+"""
+XGBoost models
+return: model
+"""
+def xgboost_model(X_train, y_train):
+    model = xgb.XGBClassifier(
+        use_label_encoder=False,
+        eval_metric='auc',
+        random_state=42
+    )
     model.fit(X_train, y_train)
     return model
 
