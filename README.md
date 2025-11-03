@@ -35,8 +35,8 @@ By combining **data-driven insights, model performance, and interpretability**, 
 - **Rows:** ~593,994  
 - **Target variable:** `loan_paid_back` (float; 1 = fully repaid, 0 = default or partial)  
 - **Data Type:** Mixed numerical and categorical variables  
-- **Mutual Informatio:**
-![alt text](mutual_information.png)
+- **Mutual Information:**
+![show_plot](mutual information.PNG)
 ---
 
 ## 🧩 Project Workflow
