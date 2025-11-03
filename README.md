@@ -113,6 +113,6 @@ A bank analyst inputs the following borrower data into the Streamlit dashboard:
 
 
 The trained model outputs:  
-👉 **Predicted probability of full repayment:** 
+👉 **Predicted probability of full repayment:**  __in progress__
 
 ---

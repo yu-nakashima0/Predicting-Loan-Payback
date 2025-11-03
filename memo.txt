@@ -49,6 +49,10 @@ after encoding:
  27  education_level_encoded          593994 non-null  float64      
  28  grade_subgrade_encoded           593994 non-null  float64 
 
+
+start virtual workplace:
+    ./.venv/Scripts/Activate.ps1
+
 baseline:
     LogisticRegression(max_iter=20)
         5-Fold Cross-Validation AUC: 0.9086 ± 0.0008
@@ -60,4 +64,5 @@ baseline:
         random_state=42
     )
         5-Fold Cross-Validation AUC: 0.9194 ± 0.0008
-    
+    Neural Network
+        

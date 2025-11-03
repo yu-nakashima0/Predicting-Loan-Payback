@@ -19,7 +19,9 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.ensemble import RandomForestClassifier
 import xgboost as xgb
-
+from tensorflow import keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
 
 """
 encoding categorical variables
@@ -215,9 +217,12 @@ def k_fold_cross_validation(df, k):
     
         #model = logistic_regression_model(X_train, y_train)
         #model = random_forest_model(X_train, y_train)
-        model = xgboost_model(X_train, y_train)
+        #model = xgboost_model(X_train, y_train)
+        model = neural_network_model(X_train, y_train)
+        y_pred_proba = model.predict(X_test).ravel()
+        """
         y_pred_proba = model.predict_proba(X_test)[:, 1]
-        
+        """
         auc = roc_auc_score(y_test, y_pred_proba)
         scores.append(auc)
     
@@ -262,6 +267,21 @@ def xgboost_model(X_train, y_train):
     model.fit(X_train, y_train)
     return model
 
+
+"""
+Neural Network model
+return: model
+"""
+def neural_network_model(X_train, y_train):
+    model = Sequential()
+    model.add(Dense(64, input_dim=X_train.shape[1], activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(32, activation='relu'))
+    model.add(Dropout(0.5)) 
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['AUC'])
+    model.fit(X_train, y_train, epochs=10, batch_size=32, verbose=1)
+    return model
 
 df = pd.read_csv('train.csv')
 print(df.head())
