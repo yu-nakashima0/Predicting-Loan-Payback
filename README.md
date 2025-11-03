@@ -35,8 +35,7 @@ By combining **data-driven insights, model performance, and interpretability**, 
 - **Rows:** ~593,994  
 - **Target variable:** `loan_paid_back` (float; 1 = fully repaid, 0 = default or partial)  
 - **Data Type:** Mixed numerical and categorical variables  
-- **Mutual Information:**
-![show plot](./mutual_information.png)
+
 ---
 
 ## 🧩 Project Workflow
@@ -65,7 +64,7 @@ By combining **data-driven insights, model performance, and interpretability**, 
    - Hyperparameter tuning using **Optuna** and **Keras Tuner**
 
 5. **Model Evaluation**
-   - Metrics: Accuracy, ROC-AUC, Precision, Recall, F1, RMSE  
+   - Metrics: AUC-ROC (Area Under the Receiver Operating Characteristic Curve)
    - Cross-validation (K-Fold)
    - Feature importance and interpretability with SHAP
 

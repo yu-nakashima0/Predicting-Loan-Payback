@@ -48,3 +48,7 @@ after encoding:
  26  employment_status_Unemployed     593994 non-null  int64        
  27  education_level_encoded          593994 non-null  float64      
  28  grade_subgrade_encoded           593994 non-null  float64 
+
+baseline:
+    LogisticRegression(max_iter=20)
+        5-Fold Cross-Validation AUC: 0.9086 ± 0.0008

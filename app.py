@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
@@ -10,7 +11,12 @@ import streamlit as st
 import plotly.graph_objects as go
 from scipy import stats
 from sklearn.feature_selection import mutual_info_classif
-
+from scipy.stats import skew
+from sklearn.preprocessing import PowerTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import StratifiedShuffleSplit
 
 
 """
@@ -73,9 +79,12 @@ normalizing numerical features
 return: dataframe with normalized numerical features
 """
 def normalize_numerical_features(df):
+    target = df["loan_paid_back"]
+    df = df.drop(columns=["loan_paid_back"])
     scaler = MinMaxScaler()
     numerical_columns = df.select_dtypes(include=['int64', 'float64']).columns
     df[numerical_columns] = scaler.fit_transform(df[numerical_columns])
+    df["loan_paid_back"] = target
     return df
 
 
@@ -86,12 +95,13 @@ return: dataframe with outliers removed
 def remove_outliers(df):
     numerical_columns = df.select_dtypes(include=['int64', 'float64']).columns
     for column in numerical_columns:
-        Q1 = df[column].quantile(0.25)
-        Q3 = df[column].quantile(0.75)
-        IQR = Q3 - Q1
-        lower_bound = Q1 - 1.5 * IQR
-        upper_bound = Q3 + 1.5 * IQR
-        df = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
+        if column != "loan_paid_back":
+            Q1 = df[column].quantile(0.25)
+            Q3 = df[column].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            df = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
     return df
 
 
@@ -146,10 +156,11 @@ visualization correlation heatmap, mutual information
 """
 def visualize_more_info(df):
     df.drop(columns = "id",inplace=True)
-    corr = df.corr()
+    corr_scores = df.corr()['loan_paid_back'].sort_values(ascending=False)
     fig, ax = plt.subplots(figsize=(12, 10))
-    sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm', ax=ax)
-    plt.title("Correlation Heatmap")
+    sns.barplot(x=corr_scores.values, y=corr_scores.index, ax=ax)
+    plt.title("Correlation Scores")
+    plt.xlim(-1, 1)  
     st.pyplot(fig)
 
     X = df.drop(columns=["loan_paid_back"])
@@ -162,6 +173,62 @@ def visualize_more_info(df):
     st.pyplot(fig2)
 
 
+"""
+detect skewness and transform only the skewed features
+return : dataframe with transformed distributions
+"""
+def transform_skewed_features(df):
+    skewness = df[df.columns].apply(lambda x: skew(x.dropna()))
+    skewed_features = skewness[abs(skewness) > 0.5].index
+    pt = PowerTransformer(method='yeo-johnson', standardize=True)
+    df[skewed_features] = pt.fit_transform(df[skewed_features])
+    return df
+
+
+"""
+create new features and felete redundant features
+return: dataframe with engineered features
+"""
+def feature_engineering(df):
+    ## implement after baseline model
+    return df
+
+
+
+"""
+k-fold cross validation
+return: average AUC
+"""
+def k_fold_cross_validation(df, k):
+    X = df.drop(columns=["loan_paid_back"])
+    y = df["loan_paid_back"]
+    
+    #skf = StratifiedKFold(n_splits=k, shuffle=True, random_state=42)
+    sss = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
+    scores = []
+    
+    for train_index, test_index in sss.split(X,y):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+    
+        model = logistic_regression_model(X_train, y_train)
+        y_pred_proba = model.predict_proba(X_test)[:, 1]
+        
+        auc = roc_auc_score(y_test, y_pred_proba)
+        scores.append(auc)
+    
+    print(f"{k}-Fold Cross-Validation AUC: {np.mean(scores):.4f} ± {np.std(scores):.4f}")
+    return scores
+
+"""
+logistic regression model
+return: model
+"""
+def logistic_regression_model(X_train, y_train):
+    model = LogisticRegression(max_iter=20)
+    model.fit(X_train, y_train)
+    return model
+
 
 
 df = pd.read_csv('train.csv')
@@ -169,14 +236,24 @@ print(df.head())
 print(df.describe())
 print(df.info())
 print(df.columns)
+print(df['loan_paid_back'].value_counts())
 
 df_encoded = encode_categorical_variables(df)
 df_encoded = handle_missing_values(df_encoded)
 df_encoded = normalize_numerical_features(df_encoded)
-df_encoded = remove_outliers(df_encoded)
-
+#df_encoded = remove_outliers(df_encoded)
+print(df_encoded['loan_paid_back'].value_counts())
 feature_groups = make_grouped_feature_list(df)
 
 #visualize_data_boxplot(df, feature_groups, "before_encoding")
 #visualize_data_countplot(df, feature_groups, "before_encoding_countplot")
 visualize_more_info(df_encoded)
+
+#df_encoded = transform_skewed_features(df_encoded)
+#df_encoded = feature_engineering(df_encoded) -> implement after baseline
+
+
+k_fold_cross_validation(df_encoded, 5)
+
+
+

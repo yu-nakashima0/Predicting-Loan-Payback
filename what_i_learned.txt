@@ -7,4 +7,16 @@ Categorical encoding:
         Nominal (no order, few categories)  ->  OneHotEncoder
         Nominal (many categories)  ->  TargetEncoder, BinaryEncoder, or CountEncoder
     
-Feature Scaling (Standardization)
+Feature Engineering:
+    Wann ist ein Feature sinnvoll?
+    -> 1. statistische Zusammenhänge
+            Für numerische Ziele: Pearson-Korrelation
+            Für kategorische Ziele: ANOVA oder Chi-Quadrat
+    -> 2. Modellbasierte Feature-Importance
+            Tree-basierte Modelle wie RandomForest oder XGBoost geben Feature-Importances aus.
+            Permutation Importance misst den Einfluss eines Features, indem man seine Werte vertauscht.
+    -> 3. Verteilungs-Check
+            Features mit nahezu konstanter Verteilung (fast alle Werte gleich) bringen wenig Mehrwert.
+            Features mit extrem vielen fehlenden Werten können ebenfalls problematisch sein.
+
+
