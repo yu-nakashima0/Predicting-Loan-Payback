@@ -76,7 +76,24 @@ def normalize_numerical_features(df):
     return df
 
 
+"""
+outlier detection and removal
+return: dataframe with outliers removed
+"""
+def remove_outliers(df):
+    numerical_columns = df.select_dtypes(include=['int64', 'float64']).columns
+    for column in numerical_columns:
+        Q1 = df[column].quantile(0.25)
+        Q3 = df[column].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        df = df[(df[column] >= lower_bound) & (df[column] <= upper_bound)]
+    return df
+
+
+
 df = encode_categorical_variables(df)
 df = handle_missing_values(df)
 df = normalize_numerical_features(df)
-
+df = remove_outliers(df)
