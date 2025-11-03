@@ -36,7 +36,7 @@ By combining **data-driven insights, model performance, and interpretability**, 
 - **Target variable:** `loan_paid_back` (float; 1 = fully repaid, 0 = default or partial)  
 - **Data Type:** Mixed numerical and categorical variables  
 - **Mutual Information:**
-![show_plot](mutual information.PNG)
+![show plot](./plots/mutual_information.png)
 ---
 
 ## 🧩 Project Workflow
