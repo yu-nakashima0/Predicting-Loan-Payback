@@ -50,6 +50,38 @@ after encoding:
  28  grade_subgrade_encoded           593994 non-null  float64 
 
 
+XGBoost Feature Importance:
+                            Feature   Importance
+8      employment_status_Unemployed  5707.703809
+7         employment_status_Student   635.046362
+5         employment_status_Retired   135.272638
+2              debt_to_income_ratio    82.340114
+1                      credit_score    49.838340
+12           grade_subgrade_encoded    25.205935
+18           loan_purpose_Education     6.401788
+14                      loan_amount     6.393689
+19                loan_purpose_Home     6.166740
+6   employment_status_Self-employed     5.679464
+0                     annual_income     5.644810
+13                    interest_rate     5.547760
+20             loan_purpose_Medical     5.514242
+3           education_level_encoded     5.343600
+15            loan_purpose_Business     5.328979
+11                     gender_Other     5.320094
+4        employment_status_Employed     5.151166
+17  loan_purpose_Debt consolidation     5.097537
+10                      gender_Male     5.038043
+21               loan_purpose_Other     4.976461
+16                 loan_purpose_Car     4.751211
+23          marital_status_Divorced     4.698768
+25            marital_status_Single     4.616338
+26           marital_status_Widowed     4.508544
+9                     gender_Female     4.300694
+22            loan_purpose_Vacation     4.291977
+24           marital_status_Married     4.146536
+
+
+
 start virtual workplace:
     ./.venv/Scripts/Activate.ps1
 

@@ -22,6 +22,8 @@ import xgboost as xgb
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
+from xgboost import plot_importance
+
 
 """
 encoding categorical variables
@@ -209,7 +211,8 @@ def k_fold_cross_validation(df, k):
     
     #skf = StratifiedKFold(n_splits=k, shuffle=True, random_state=42)
     sss = StratifiedShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
-    scores = []
+    scores = [] 
+    list_for_importance = []
     
     for train_index, test_index in sss.split(X,y):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
@@ -217,17 +220,16 @@ def k_fold_cross_validation(df, k):
     
         #model = logistic_regression_model(X_train, y_train)
         #model = random_forest_model(X_train, y_train)
-        #model = xgboost_model(X_train, y_train)
-        model = neural_network_model(X_train, y_train)
-        y_pred_proba = model.predict(X_test).ravel()
-        """
+        model, importance = xgboost_model(X_train, y_train)
+        list_for_importance.append(importance)
+        #model = neural_network_model(X_train, y_train)
+        #y_pred_proba = model.predict(X_test).ravel()
         y_pred_proba = model.predict_proba(X_test)[:, 1]
-        """
         auc = roc_auc_score(y_test, y_pred_proba)
         scores.append(auc)
     
     print(f"{k}-Fold Cross-Validation AUC: {np.mean(scores):.4f} ± {np.std(scores):.4f}")
-    return scores
+    return scores, list_for_importance
 
 """
 logistic regression model
@@ -264,8 +266,17 @@ def xgboost_model(X_train, y_train):
         eval_metric='auc',
         random_state=42
     )
-    model.fit(X_train, y_train)
-    return model
+    model.fit(
+        X_train, y_train,     
+        verbose=True                     
+    )
+
+    importance = model.get_booster().get_score(importance_type='gain')
+    importance = pd.DataFrame(
+        importance.items(), columns=['Feature', 'Importance']
+    ).sort_values(by='Importance', ascending=False)
+    print(importance)
+    return model, importance
 
 
 """
@@ -280,8 +291,17 @@ def neural_network_model(X_train, y_train):
     model.add(Dropout(0.5)) 
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['AUC'])
-    model.fit(X_train, y_train, epochs=10, batch_size=32, verbose=1)
+    model.fit(X_train, y_train, epochs=5, batch_size=32, verbose=1)
     return model
+
+
+def statistik_feature_importance(list_for_importance):
+    combined_importance = pd.concat(list_for_importance)
+    mean_importance = combined_importance.groupby('Feature')['Importance'].mean().reset_index()
+    mean_importance = mean_importance.sort_values(by='Importance', ascending=False)
+    print(mean_importance)
+
+
 
 df = pd.read_csv('train.csv')
 print(df.head())
@@ -305,7 +325,8 @@ visualize_more_info(df_encoded)
 #df_encoded = feature_engineering(df_encoded) -> implement after baseline
 
 
-k_fold_cross_validation(df_encoded, 5)
+scores, list_for_importance =  k_fold_cross_validation(df_encoded, 5)
 
+statistik_feature_importance(list_for_importance)
 
 
