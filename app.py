@@ -23,6 +23,8 @@ from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from xgboost import plot_importance
+import optuna
+from xgboost.callback import EarlyStopping
 
 
 """
@@ -295,11 +297,88 @@ def neural_network_model(X_train, y_train):
     return model
 
 
+
+"""
+combine feature importance from all folds and calculate mean importance
+return: mean feature importance dataframe
+"""
 def statistik_feature_importance(list_for_importance):
     combined_importance = pd.concat(list_for_importance)
     mean_importance = combined_importance.groupby('Feature')['Importance'].mean().reset_index()
     mean_importance = mean_importance.sort_values(by='Importance', ascending=False)
     print(mean_importance)
+
+
+"""
+hyperparameter tuning with Optuna
+return : average AUC
+"""
+def objective(trial, X, y):
+    param = {
+        'n_estimators': trial.suggest_int('n_estimators', 100, 1000),
+        'max_depth': trial.suggest_int('max_depth', 3, 10),
+        'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
+        'subsample': trial.suggest_float('subsample', 0.5, 1.0),
+        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
+        'reg_alpha': trial.suggest_float('reg_alpha', 0.0, 1.0),
+        'reg_lambda': trial.suggest_float('reg_lambda', 0.0, 1.0),
+        'use_label_encoder': False,
+        'eval_metric': 'auc',
+        'random_state': 42,
+        'early_stopping_rounds': 10
+    }
+
+    skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+    aucs = []
+
+    for train_idx, valid_idx in skf.split(X, y):
+        X_train, X_valid = X.iloc[train_idx], X.iloc[valid_idx]
+        y_train, y_valid = y.iloc[train_idx], y.iloc[valid_idx]
+
+        model = xgb.XGBClassifier(**param)
+        model.fit(
+            X_train, y_train,
+            eval_set=[(X_valid, y_valid)]
+        )
+        y_pred = model.predict_proba(X_valid)[:, 1]
+        auc = roc_auc_score(y_valid, y_pred)
+        print(f"AUC for fold: {auc}")
+        aucs.append(auc)
+
+    return np.mean(aucs)
+
+
+"""
+hyperparameter tuning with Optuna
+return: best model, best hyperparameters, best AUC, feature importance dataframe
+"""
+def tune_xgboost_with_optuna(df, n_trials):
+    X = df.drop(columns=['loan_paid_back'])
+    y = df['loan_paid_back']
+
+    # Optuna Study
+    study = optuna.create_study(direction='maximize')
+    study.optimize(lambda trial: objective(trial, X, y), n_trials=n_trials)
+
+    print("Best AUC:", study.best_value)
+    print("Best hyperparameters:", study.best_params)
+
+    # Trainiere Modell mit den besten Parametern auf gesamten Datensatz
+    best_params = study.best_params
+    best_params.update({'use_label_encoder': False, 'eval_metric': 'auc', 'random_state': 42})
+
+    best_model = xgb.XGBClassifier(**best_params)
+    best_model.fit(X, y)
+
+    # Feature Importance
+    importance = best_model.get_booster().get_score(importance_type='gain')
+    importance_df = pd.DataFrame(list(importance.items()), columns=['Feature', 'Importance']).sort_values(by='Importance', ascending=False)
+
+    print("Top Features:\n", importance_df)
+    print("Best Hyperparameters:\n", study.best_params)
+    print("Best AUC:\n", study.best_value,)
+
+    return best_model, study.best_params, study.best_value, importance_df
 
 
 
@@ -325,8 +404,10 @@ visualize_more_info(df_encoded)
 #df_encoded = feature_engineering(df_encoded) -> implement after baseline
 
 
-scores, list_for_importance =  k_fold_cross_validation(df_encoded, 5)
+#scores, list_for_importance =  k_fold_cross_validation(df_encoded, 5)
 
-statistik_feature_importance(list_for_importance)
+#statistik_feature_importance(list_for_importance)
 
+
+best_model, best_params, best_auc, importance_df = tune_xgboost_with_optuna(df_encoded, n_trials=10)
 

@@ -66,7 +66,7 @@ By combining **data-driven insights, model performance, and interpretability**, 
 5. **Model Evaluation**
    - Metrics: AUC-ROC (Area Under the Receiver Operating Characteristic Curve)
    - Cross-validation (K-Fold)
-   - Feature importance and interpretability with SHAP
+   - Feature importance
 
 6. **Deployment**
    - Streamlit app for interactive prediction  
