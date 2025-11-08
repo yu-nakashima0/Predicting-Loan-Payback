@@ -98,3 +98,9 @@ baseline:
         5-Fold Cross-Validation AUC: 0.9194 ± 0.0008
     Neural Network
         
+
+1. hyperparameter iptimization 
+    Best Hyperparameters:
+    {'n_estimators': 809, 'max_depth': 7, 'learning_rate': 0.071823951579327, 'subsample': 0.8064003270882567, 'colsample_bytree': 0.7095187833222674, 'reg_alpha': 0.25269604526136613, 'reg_lambda': 0.7702697557795304}
+    Best AUC:
+    0.9206637613803655

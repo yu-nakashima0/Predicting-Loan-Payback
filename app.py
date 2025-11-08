@@ -198,7 +198,7 @@ create new features and felete redundant features
 return: dataframe with engineered features
 """
 def feature_engineering(df):
-    ## implement after baseline model
+    
     return df
 
 
