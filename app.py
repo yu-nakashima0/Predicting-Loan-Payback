@@ -215,6 +215,15 @@ def feature_engineering(df):
     return df
 
 
+"""
+check correlation
+"""
+def visualize_correlation(df):
+    #df = df.drop(columns = ["id"])
+    corr = df.corr()
+    print(corr)
+    sns.heatmap(corr, cmap = "coolwarm", center = 0)
+    plt.show()
 
 """
 k-fold cross validation
@@ -339,7 +348,8 @@ def objective(trial, X, y):
         'use_label_encoder': False,
         'eval_metric': 'auc',
         'random_state': 42,
-        'early_stopping_rounds': 10
+        'early_stopping_rounds': 10,
+        'scale_pos_weight' : 4
     }
 
     skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
@@ -405,14 +415,11 @@ print(df['loan_paid_back'].value_counts())
 
 df_encoded = encode_categorical_variables(df)
 df_encoded = handle_missing_values(df_encoded)
-df_encoded = normalize_numerical_features(df_encoded)
-#df_encoded = remove_outliers(df_encoded)
-print(df_encoded['loan_paid_back'].value_counts())
-feature_groups = make_grouped_feature_list(df)
+
 
 #visualize_data_boxplot(df, feature_groups, "before_encoding")
 #visualize_data_countplot(df, feature_groups, "before_encoding_countplot")
-visualize_more_info(df_encoded)
+#visualize_more_info(df_encoded)
 
 #df_encoded = transform_skewed_features(df_encoded)
 #df_encoded = feature_engineering(df_encoded) -> implement after baseline
@@ -423,5 +430,11 @@ visualize_more_info(df_encoded)
 #statistik_feature_importance(list_for_importance)
 
 df_encoded = feature_engineering(df_encoded)
+print(df_encoded.columns)
+df_encoded = normalize_numerical_features(df_encoded)
+#visualize_correlation(df_encoded)
+#df_encoded = remove_outliers(df_encoded)
+print(df_encoded['loan_paid_back'].value_counts())
+feature_groups = make_grouped_feature_list(df)
 best_model, best_params, best_auc, importance_df = tune_xgboost_with_optuna(df_encoded, n_trials=10)
 
