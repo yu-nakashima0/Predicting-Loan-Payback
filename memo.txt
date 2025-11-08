@@ -99,8 +99,14 @@ baseline:
     Neural Network
         
 
-1. hyperparameter iptimization 
+1. hyperparameter optimization without new features 
     Best Hyperparameters:
     {'n_estimators': 809, 'max_depth': 7, 'learning_rate': 0.071823951579327, 'subsample': 0.8064003270882567, 'colsample_bytree': 0.7095187833222674, 'reg_alpha': 0.25269604526136613, 'reg_lambda': 0.7702697557795304}
     Best AUC:
-    0.9206637613803655
+    0.
+
+2. add new feature 
+    Best Hyperparameters:
+    {'n_estimators': 920, 'max_depth': 3, 'learning_rate': 0.1680098986712539, 'subsample': 0.5538714018402994, 'colsample_bytree': 0.6555168602120371, 'reg_alpha': 0.4537280355069443, 'reg_lambda': 0.7711506026153779}
+    Best AUC:
+    0.9196544034704046

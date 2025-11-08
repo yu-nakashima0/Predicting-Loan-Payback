@@ -25,6 +25,7 @@ from tensorflow.keras.layers import Dense, Dropout
 from xgboost import plot_importance
 import optuna
 from xgboost.callback import EarlyStopping
+from sklearn.feature_selection import SelectFromModel
 
 
 """
@@ -198,7 +199,19 @@ create new features and felete redundant features
 return: dataframe with engineered features
 """
 def feature_engineering(df):
-    
+    df["income_to_loan_ratio"] = df["annual_income"] / (df["loan_amount"] + 1)
+    df["debt_to_income_ratio_log"] = np.log1p(df["debt_to_income_ratio"])
+    df["interest_income_ratio"] = df["interest_rate"] / (df["annual_income"] + 1)
+    df["income_x_credit"] = df["annual_income"] * df["credit_score"]
+    df["loan_amount_x_interest"] = df["loan_amount"] * df["interest_rate"]
+    df["employment_marital"] = (
+    df["employment_status_Employed"] * df["marital_status_Married"]
+    )
+    df["employment_unemployed_and_high_debt"] = (
+        df["employment_status_Unemployed"] * (df["debt_to_income_ratio"] > 0.4)
+    ).astype(int)
+    risky_purposes = ["Debt consolidation", "Medical", "Vacation"]
+    df["loan_purpose_risk_group"] = df["loan_purpose_Education"] + df["loan_purpose_Medical"]
     return df
 
 
@@ -272,13 +285,14 @@ def xgboost_model(X_train, y_train):
         X_train, y_train,     
         verbose=True                     
     )
-
+    selection = SelectFromModel(model, threshold="median", prefit=True)
+    X_selected = selection.transform(X)
     importance = model.get_booster().get_score(importance_type='gain')
     importance = pd.DataFrame(
         importance.items(), columns=['Feature', 'Importance']
     ).sort_values(by='Importance', ascending=False)
     print(importance)
-    return model, importance
+    return model, importance,X_selected
 
 
 """
@@ -408,6 +422,6 @@ visualize_more_info(df_encoded)
 
 #statistik_feature_importance(list_for_importance)
 
-
+df_encoded = feature_engineering(df_encoded)
 best_model, best_params, best_auc, importance_df = tune_xgboost_with_optuna(df_encoded, n_trials=10)
 
