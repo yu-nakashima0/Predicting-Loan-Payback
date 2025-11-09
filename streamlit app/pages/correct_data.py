@@ -1,4 +1,6 @@
 import streamlit as st
+import pandas as pd
+
 
 st.write("hello")
 
@@ -42,6 +44,19 @@ grade_subgrade = st.radio("Select your grade and subgrade:", list_of_grade)
 
 if st.button("send"):
     try:
+        df = pd.DataFrame(
+            'annual_income':[annual_income], 
+            'debt_to_income_ratio':[debt_to_income_ratio], 
+            'credit_score':[credit_score],
+            'loan_amount':[loan_amount], 
+            'interest_rate':[interest_rate],
+            'gender':[gender], 
+            'marital_status':[marital_status],
+            'education_level':[education_level], 
+            'employment_status':[employment_status], 
+            'loan_purpose':[loan_purpose],
+            'grade_subgrade':[grade_subgrade]
+        )
         st.switch_page("pages/predicting.py")
     except Exception as e:
         st.error(f"Error: {e}")
