@@ -4,5 +4,3 @@ scikit-learn
 xgboost
 joblib
 numpy
-os
-sys
