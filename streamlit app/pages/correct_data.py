@@ -44,7 +44,7 @@ grade_subgrade = st.radio("Select your grade and subgrade:", list_of_grade)
 
 if st.button("send"):
     try:
-        df = pd.DataFrame(
+        data = {
             'annual_income':[annual_income], 
             'debt_to_income_ratio':[debt_to_income_ratio], 
             'credit_score':[credit_score],
@@ -56,7 +56,8 @@ if st.button("send"):
             'employment_status':[employment_status], 
             'loan_purpose':[loan_purpose],
             'grade_subgrade':[grade_subgrade]
-        )
+        }
+        df. pd.DataFrame(data)
         st.switch_page("pages/predicting.py")
     except Exception as e:
         st.error(f"Error: {e}")
