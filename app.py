@@ -26,7 +26,7 @@ from xgboost import plot_importance
 import optuna
 from xgboost.callback import EarlyStopping
 from sklearn.feature_selection import SelectFromModel
-
+import joblib
 
 """
 encoding categorical variables
@@ -294,14 +294,13 @@ def xgboost_model(X_train, y_train):
         X_train, y_train,     
         verbose=True                     
     )
-    selection = SelectFromModel(model, threshold="median", prefit=True)
-    X_selected = selection.transform(X)
+    
     importance = model.get_booster().get_score(importance_type='gain')
     importance = pd.DataFrame(
         importance.items(), columns=['Feature', 'Importance']
     ).sort_values(by='Importance', ascending=False)
     print(importance)
-    return model, importance,X_selected
+    return model, importance
 
 
 """
@@ -438,3 +437,9 @@ print(df_encoded['loan_paid_back'].value_counts())
 feature_groups = make_grouped_feature_list(df)
 best_model, best_params, best_auc, importance_df = tune_xgboost_with_optuna(df_encoded, n_trials=10)
 
+
+try :
+    joblib.dump(best_model, "loan_model.pkl")
+    print("model stored successfully")
+except Exception as e:
+    print(f"Error: {e}")

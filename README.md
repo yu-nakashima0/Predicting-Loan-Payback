@@ -68,10 +68,6 @@ By combining **data-driven insights, model performance, and interpretability**, 
    - Cross-validation (K-Fold)
    - Feature importance
 
-6. **Deployment**
-   - Streamlit app for interactive prediction  
-   - Visualizing model metrics and feature influences dynamically
-
 ---
 
 ## 🛠️ Technologies Used
@@ -88,7 +84,9 @@ By combining **data-driven insights, model performance, and interpretability**, 
 ---
 
 ## 🚀 Future Work
-
+- **Deployment**
+   - Streamlit app for interactive prediction  
+   - Visualizing model metrics and feature influences dynamically
 - Integrate external credit history datasets for improved accuracy  
 - Add time-series analysis for sequential loan performance prediction  
 - Experiment with ensemble stacking models  

@@ -127,7 +127,7 @@ baseline:
     Best AUC:
     0.9196544034704046
 
-3. add to parameter 'scale_pos_weight' : 4
+3. add parameter 'scale_pos_weight' : 4
     Best Hyperparameters:
     {'n_estimators': 354, 'max_depth': 4, 'learning_rate': 0.18250402754912762, 'subsample': 0.9831300073615593, 'colsample_bytree': 0.689652842715077, 'reg_alpha': 0.2815848752242487, 'reg_lambda': 0.746971043703558}
     Best AUC:
