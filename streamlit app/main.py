@@ -10,6 +10,6 @@ st.text("Welcome!")
 # button for start predicting
 if st.button("start"):
     try:
-        st.switch_page("pages/correct_data.py")
+        st.switch_page("pages/collect_data.py")
     except Exception as e:
         st.error(f"Error: {e}")

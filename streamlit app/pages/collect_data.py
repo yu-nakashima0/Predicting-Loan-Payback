@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 
-st.write("hello")
+st.title("Please enter the data required for forecasting.")
 
 # data that i need to correct:             
 #     (feature)              (datatype)   (example)
@@ -27,7 +27,7 @@ loan_amount = st.number_input("Enter your loan amount:", min_value = 0.0)
 interest_rate = st.number_input("Enter your interest rate:", min_value = 0.0)
 gender = st.radio("Select your gender:",["Female","Male","Other"])
 marital_status = st.radio("Select your marital status:", ['Single' ,'Married', 'Divorced', 'Widowed'])
-education_level = st.radio("Select your education level:", ['High School', "Master's", "Bachelor's", 'PhD', 
+education_level = st.radio("Select your education level:", ['High School', "Bachelor's", "Master's", 'PhD', 
 'Other'])
 employment_status = st.radio("Select your employment status:", ['Self-employed', 'Employed', 'Unemployed', 'Retired', 'Student'])
 loan_purpose = st.radio("Select your loan purpose:", ['Debt consolidation', 'Home', 'Education', 'Vacation', 'Car', 
@@ -57,7 +57,14 @@ if st.button("send"):
             'loan_purpose':[loan_purpose],
             'grade_subgrade':[grade_subgrade]
         }
-        df. pd.DataFrame(data)
+        df = pd.DataFrame(data)
+        st.session_state["prediction_input"] = df
         st.switch_page("pages/predicting.py")
     except Exception as e:
         st.error(f"Error: {e}")
+
+
+
+
+
+
